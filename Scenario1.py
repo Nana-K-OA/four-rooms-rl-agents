@@ -20,6 +20,7 @@ def run_training(strategy, runs=5, episodes=1000):
             
             while not done:
                 x, y = state
+                x, y = max(0, min(x, 10)), max(0, min(y, 10))
                 s_pack = int(packages_left > 0)
                 
                 # Action selection
@@ -36,6 +37,7 @@ def run_training(strategy, runs=5, episodes=1000):
                 
                 # Q-update
                 new_x, new_y = new_state
+                new_x, new_y = max(0, min(new_x, 10)), max(0, min(new_y, 10))
                 best_next = np.argmax(q_table[new_x, new_y, int(packages_left > 0)])
                 q_table[x, y, s_pack, action] += 0.1 * (reward + 0.99 * q_table[new_x, new_y, int(packages_left > 0), best_next] - q_table[x, y, s_pack, action])
                 state = new_state
