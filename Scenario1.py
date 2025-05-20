@@ -9,13 +9,13 @@ def run_training(strategy, runs=5, episodes=1000):
     rewards = np.zeros((runs, episodes))
     
     for run in range(runs):
-        env = FourRooms('simple')
+        fourRoomsObj = FourRooms('simple')
         q_table = np.zeros((11, 11, 2, 4))
         param = strategy['init']
         
         for ep in tqdm(range(episodes), desc=f"{strategy['name']} Run {run+1}"):
-            env.newEpoch()
-            state, packages_left, done = env.getPosition(), env.getPackagesRemaining(), False
+            fourRoomsObj.newEpoch()
+            state, packages_left, done = fourRoomsObj.getPosition(), fourRoomsObj.getPackagesRemaining(), False
             param = max(param * strategy['decay'], strategy['min'])
             
             while not done:
@@ -31,7 +31,7 @@ def run_training(strategy, runs=5, episodes=1000):
                     action = np.random.choice(4, p=probs)
                 
                 # Environment step
-                cell, new_state, packages_left, done = env.takeAction(action)
+                cell, new_state, packages_left, done = fourRoomsObj.takeAction(action)
                 reward = 10 if (cell > 0 and packages_left == 0) else -1 if (done and packages_left > 0) else -0.1
                 rewards[run, ep] += reward
                 
@@ -43,7 +43,7 @@ def run_training(strategy, runs=5, episodes=1000):
                 state = new_state
         
         if run == runs-1:  # Save path for last run
-            env.showPath(-1, savefig=f"plots/{strategy['name']}_path.png")
+            fourRoomsObj.showPath(-1, savefig=f"plots/{strategy['name']}_path.png")
     
     return rewards
 
