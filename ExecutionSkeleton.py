@@ -15,13 +15,17 @@ def main():
     aTypes = ['UP', 'DOWN', 'LEFT', 'RIGHT']
     gTypes = ['EMPTY', 'RED', 'GREEN', 'BLUE']
 
+    goal_positions = [(11, 10), (9, 4), (9, 8)]
+
     print('Agent starts at: {0}'.format(fourRoomsObj.getPosition()))
 
     for act in actSeq:
         gridType, newPos, packagesRemaining, isTerminal = fourRoomsObj.takeAction(act)
 
         print("Agent took {0} action and moved to {1} of type {2}".format (aTypes[act], newPos, gTypes[gridType]))
-
+        
+        if newPos in goal_positions:
+            print("Reaced goal", newPos)
         if isTerminal:
             break
 
