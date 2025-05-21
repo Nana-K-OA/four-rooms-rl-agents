@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
 
-def run_training(strategy, stochastic=False, runs=1, episodes=1000):
+def run_training(strategy, stochastic=False, runs=3, episodes=2000):
     os.makedirs('plots', exist_ok=True)
     rewards = np.zeros((runs, episodes))
     
