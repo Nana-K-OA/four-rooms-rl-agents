@@ -1,15 +1,17 @@
+import sys
 from FourRooms import FourRooms
 import numpy as np
 import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
 
-def run_training(strategy, runs=5, episodes=1000):
+def run_training(strategy, stochastic=False, runs=1, episodes=1000):
     os.makedirs('plots', exist_ok=True)
     rewards = np.zeros((runs, episodes))
     
     for run in range(runs):
-        fourRoomsObj = FourRooms('simple')
+        #passing stochastic to Four Rooms
+        fourRoomsObj = FourRooms('simple', stochastic=stochastic)
         q_table = np.zeros((11, 11, 2, 4))
         param = strategy['init']
         
@@ -43,11 +45,16 @@ def run_training(strategy, runs=5, episodes=1000):
                 state = new_state
         
         if run == runs-1:  # Save path for last run
-            fourRoomsObj.showPath(-1, savefig=f"plots/{strategy['name']}_path.png")
+            suffix = 'stochastic' if stochastic else ""
+            fourRoomsObj.showPath(-1, savefig=f"plots/{strategy['name']}{suffix}_path_.png")
     
     return rewards
 
 def plot_results(strategies, all_rewards):
+    suffix = "_stochastic" if stochastic else ""
+    title = "Exploration strategy Comparism"
+    if stochastic:
+        title += "(Stochastic Actions)"
     plt.figure(figsize=(10, 5))
     for i, (name, rewards) in enumerate(zip([s['name'] for s in strategies], all_rewards)):
         mean, std = np.mean(rewards, axis=0), np.std(rewards, axis=0)
@@ -56,13 +63,15 @@ def plot_results(strategies, all_rewards):
     plt.title("Exploration Strategy Comparison")
     plt.xlabel("Episode"); plt.ylabel("Total Reward")
     plt.legend(); plt.tight_layout()
-    plt.savefig("plots/exploration_comparison.png")
+    plt.savefig(f"plots/exploration_comparison{suffix}.png")
 
 if __name__ == "__main__":
+    stochastic = '-stochastic' in sys.argv
+
     strategies = [
         {'name': 'ε-greedy', 'init': 0.2, 'decay': 0.995, 'min': 0.01},
         {'name': 'Boltzmann', 'init': 1.0, 'decay': 0.995, 'min': 0.1}
     ]
     
-    all_rewards = [run_training(s) for s in strategies]
+    all_rewards = [run_training(s, stochastic=stochastic) for s in strategies]
     plot_results(strategies, all_rewards)
