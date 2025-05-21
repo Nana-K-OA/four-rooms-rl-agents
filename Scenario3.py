@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
 
-def run_training(runs=5, episodes=1000):
+def run_training(runs=5, episodes= 200):
     os.makedirs('plots', exist_ok=True)
     rewards = np.zeros((runs, episodes))
     
@@ -38,7 +38,7 @@ def run_training(runs=5, episodes=1000):
                 # My Reward selection
                 reward = -0.1  #penalty step
                 if cell == next_package:
-                    print(f"✅ Collected correct package {cell} at {new_state}")
+                    #print(f"✅ Collected correct package {cell} at {new_state}")
                     reward += 5
                     next_package += 1
                     if next_package > 3:
@@ -47,7 +47,7 @@ def run_training(runs=5, episodes=1000):
                 elif cell in [1, 2, 3] and cell != next_package:
                     reward -= 2
                     done = True 
-                    print(f" Collected wrong package {cell} at {new_state}. Terminating.")
+                    #print(f" Collected wrong package {cell} at {new_state}. Terminating.")
                 
                 rewards[run, ep] += reward
                 
