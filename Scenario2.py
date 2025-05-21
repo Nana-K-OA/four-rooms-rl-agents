@@ -6,7 +6,7 @@ from tqdm import tqdm
 import sys
 
 #used multiple runs to ensure robustness
-def run_training(runs=3, episodes=2000, stochastic=False):
+def run_training(runs=3, episodes=1000, stochastic=False):
     os.makedirs('plots', exist_ok=True)
     rewards = np.zeros((runs, episodes))
     
