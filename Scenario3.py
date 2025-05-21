@@ -3,14 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
+import sys
 
-def run_training(runs=5, episodes= 200):
+def run_training(runs=3, episodes= 2000, stochastic=False):
     os.makedirs('plots', exist_ok=True)
     rewards = np.zeros((runs, episodes))
     
     for run in range(runs):
-        fourRoomsObj = FourRooms('rgb') 
-        q_table = np.zeros((11, 11, 5, 4))
+        fourRoomsObj = FourRooms('rgb', stochastic=stochastic) 
+        q_table = np.zeros((11, 11, 4, 4)) #3 packages 0,1,2,3 /4 states
         epsilon = 0.2
         epsilon_min = 0.01
         epsilon_decay = 0.995
@@ -30,7 +31,7 @@ def run_training(runs=5, episodes= 200):
                 if np.random.random() < epsilon:
                     action = np.random.randint(4)
                 else:
-                    action = np.argmax(q_table[x, y, next_package])
+                    action = np.argmax(q_table[x, y, next_package - 1])
                 
                 # Take action
                 cell, new_state, _, done = fourRoomsObj.takeAction(action)
@@ -38,7 +39,7 @@ def run_training(runs=5, episodes= 200):
                 # My Reward selection
                 reward = -0.1  #penalty step
                 if cell == next_package:
-                    #print(f"✅ Collected correct package {cell} at {new_state}")
+                    #print(f"Collected correct package {cell} at {new_state}")
                     reward += 5
                     next_package += 1
                     if next_package > 3:
@@ -54,18 +55,21 @@ def run_training(runs=5, episodes= 200):
                 # Q-learning update
                 new_x, new_y = new_state
                 new_x, new_y = max(0, min(new_x, 10)), max(0, min(new_y, 10))
-                best_next = np.argmax(q_table[new_x, new_y, next_package])
-                
-                q_table[x, y, next_package, action] += 0.1 * (reward + 0.99 * q_table[new_x, new_y, next_package, best_next] - q_table[x, y, next_package, action])
+                idx = min(next_package -1, 3)
+                best_next = np.argmax(q_table[new_x, new_y, idx])
+                #learning rate = 0.1,  gamma = 0.99
+                q_table[x, y, idx, action] += 0.1 * (reward + 0.99 * q_table[new_x, new_y, idx, best_next] - q_table[x, y, idx, action])
                 
                 state = new_state
         
         #final path shown after last episode run
         if run == runs - 1:
-            fourRoomsObj.showPath(-1, savefig="plots/rgb_path.png")
+            suffix = "_stochastic" if stochastic else "" #if stochastic then stochastic plot will be generated
+            fourRoomsObj.showPath(-1, savefig=f"plots/rgb_path{suffix}.png")
     
     return rewards
 
 if __name__ == "__main__":
-    all_rewards = run_training()
+    stochastic = '-stochastic' in sys.argv
+    all_rewards = run_training(stochastic=stochastic)
     

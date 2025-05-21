@@ -1,0 +1,10 @@
+Scenario1.py: contains code for Scenario 1. Prints output images of exploration
+strategies compared to ε-greedy_path_.png andBoltzmann_path_.png also a comparism of both _exploration_comparison.png
+
+Scenario 2: contains code for Scenario 2. Prints output image to multi_.png
+
+Scenario 3: contains code for Scenario 3. Prints out image to rgb_path.png
+
+NB: All stochastic scenarios have stochastic in their names
+
+Requirements: names of packages to be installed

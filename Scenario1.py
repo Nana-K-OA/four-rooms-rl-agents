@@ -59,7 +59,7 @@ def plot_results(strategies, all_rewards):
     for i, (name, rewards) in enumerate(zip([s['name'] for s in strategies], all_rewards)):
         mean, std = np.mean(rewards, axis=0), np.std(rewards, axis=0)
         plt.plot(mean, label=name, color=['blue', 'orange'][i])
-        plt.fill_between(range(1000), mean-std, mean+std, alpha=0.2, color=['blue', 'orange'][i])
+        plt.fill_between(range(len(mean)), mean-std, mean+std, alpha=0.2, color=['blue', 'orange'][i])
     plt.title("Exploration Strategy Comparison")
     plt.xlabel("Episode"); plt.ylabel("Total Reward")
     plt.legend(); plt.tight_layout()

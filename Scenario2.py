@@ -6,13 +6,13 @@ from tqdm import tqdm
 import sys
 
 #used multiple runs to ensure robustness
-def run_training(runs=3, episodes=1000, stochastic=False):
+def run_training(runs=3, episodes=2000, stochastic=False):
     os.makedirs('plots', exist_ok=True)
     rewards = np.zeros((runs, episodes))
     
     for run in range(runs):
         fourRoomsObj = FourRooms('multi', stochastic=stochastic) 
-        q_table = np.zeros((11, 11, 5, 4)) #4 packages agent can collect
+        q_table = np.zeros((11, 11, 5, 4))
         epsilon = 0.2
         epsilon_min = 0.01
         epsilon_decay = 0.995
@@ -53,7 +53,7 @@ def run_training(runs=3, episodes=1000, stochastic=False):
                 new_x, new_y = new_state
                 new_x, new_y = max(0, min(new_x, 10)), max(0, min(new_y, 10))
                 best_next = np.argmax(q_table[new_x, new_y, new_packages_left])
-                
+                #learning rate = 0.1,  gamma = 0.99
                 q_table[x, y, s_pack, action] += 0.1 * (reward + 0.99 * q_table[new_x, new_y, new_packages_left, best_next] - q_table[x, y, s_pack, action])
                 
                 state = new_state
