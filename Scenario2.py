@@ -58,7 +58,7 @@ def run_training(runs=5, episodes=1000):
                 packages_left = new_packages_left
         
         if run == runs - 1:
-            fourRoomsObj.showPath(-1, savefig="plots/multi_path.png")
+            fourRoomsObj.showPath(-1, savefig="plots/scenario2.png")
     
     return rewards
 
