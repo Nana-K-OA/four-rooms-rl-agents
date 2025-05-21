@@ -3,14 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
+import sys
 
-def run_training(runs=5, episodes=1000):
+#used multiple runs to ensure robustness
+def run_training(runs=3, episodes=2000, stochastic=False):
     os.makedirs('plots', exist_ok=True)
     rewards = np.zeros((runs, episodes))
     
     for run in range(runs):
-        fourRoomsObj = FourRooms('multi') 
-        q_table = np.zeros((11, 11, 5, 4))
+        fourRoomsObj = FourRooms('multi', stochastic=stochastic) 
+        q_table = np.zeros((11, 11, 5, 4)) #4 packages agent can collect
         epsilon = 0.2
         epsilon_min = 0.01
         epsilon_decay = 0.995
@@ -41,7 +43,7 @@ def run_training(runs=5, episodes=1000):
                 if new_packages_left < packages_left:
                     reward += 2  # package collected
                 if done and new_packages_left == 0:
-                    reward += 10  # all packages collected,finished
+                    reward += 10  # for all packages collected
                 elif done and new_packages_left > 0:
                     reward -= 1  # ends without collecting all packages
                 
@@ -58,10 +60,12 @@ def run_training(runs=5, episodes=1000):
                 packages_left = new_packages_left
         
         if run == runs - 1:
-            fourRoomsObj.showPath(-1, savefig="plots/scenario2.png")
+            suffix = "_stochastic" if stochastic else "" #if stochastic then stochastic plot will be generated
+            fourRoomsObj.showPath(-1, savefig=f"plots/multi_{suffix}.png")
     
     return rewards
 
 if __name__ == "__main__":
-    all_rewards = run_training()
+    stochastic = '-stochastic' in sys.argv
+    all_rewards = run_training(stochastic=stochastic)
     

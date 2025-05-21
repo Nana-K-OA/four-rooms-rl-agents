@@ -63,7 +63,7 @@ def plot_results(strategies, all_rewards):
     plt.title("Exploration Strategy Comparison")
     plt.xlabel("Episode"); plt.ylabel("Total Reward")
     plt.legend(); plt.tight_layout()
-    plt.savefig(f"plots/exploration_comparison{suffix}.png")
+    plt.savefig(f"plots/_exploration_comparison{suffix}.png")
 
 if __name__ == "__main__":
     stochastic = '-stochastic' in sys.argv
