@@ -1,10 +1,83 @@
-Scenario1.py: contains code for Scenario 1. Prints output images of exploration
-strategies compared to ε-greedy_path_.png andBoltzmann_path_.png also a comparism of both _exploration_comparison.png
+# Q-Learning in the Four Rooms Environment
 
-Scenario 2: contains code for Scenario 2. Prints output image to multi_.png
+Tabular Q-learning agents solving three package-collection tasks in the Four Rooms
+grid world, including a comparison of exploration strategies and a stochastic
+(noisy-action) variant of every scenario.
 
-Scenario 3: contains code for Scenario 3. Prints out image to rgb_path.png
+## The environment
 
-NB: All stochastic scenarios have stochastic in their names
+A 11x11 interior grid split into four rooms joined by doorways. The agent can move
+UP, DOWN, LEFT or RIGHT. Packages and the agent's start position are placed randomly
+when an environment is created, and stay fixed across episodes of that run.
 
-Requirements: names of packages to be installed
+In **stochastic mode**, each action has a 20% chance of being replaced by a random
+different action.
+
+`FourRooms.py` (the environment) and `ExecutionSkeleton.py` (an example of how to
+drive it) are provided resources. The three scenario scripts contain my Q-learning implementations.
+
+## Scenarios
+
+| Scenario | File | Task | State | Rewards |
+|----------|------|------|-------|---------|
+| 1 | `Scenario1.py` | Collect one package; compare exploration strategies | (x, y, package remaining) | +10 on collection, -0.1 per step |
+| 2 | `Scenario2.py` | Collect three packages in any order | (x, y, packages left) | +2 per package, +10 for all, -0.1 per step |
+| 3 | `Scenario3.py` | Collect red, green, blue packages **in order**; wrong order ends the episode | (x, y, next package) | +5 correct package, +10 for finishing, -2 wrong package (terminal), -0.1 per step |
+
+## Method
+
+- **Algorithm:** tabular Q-learning
+- **Learning rate:** 0.1, **discount factor:** 0.99
+- **Training:** 3 independent runs x 2000 episodes per scenario
+- **Scenario 1 exploration strategies:**
+  - ε-greedy: ε starts at 0.2, decays by 0.995 per episode, minimum 0.01
+  - Boltzmann (softmax): temperature starts at 1.0, decays by 0.995 per episode, minimum 0.1
+- **Scenarios 2 and 3:** ε-greedy with the same schedule as above
+
+## Results
+
+> Add your findings here, for example:
+> - Which exploration strategy converged faster in Scenario 1, and by how much
+> - How deterministic vs stochastic results differ
+> - Final average reward per scenario
+> - Path figures from `plots/`
+
+![Exploration comparison](plots/exploration_comparison.png)
+
+## Getting started
+
+```bash
+git clone https://github.com/<your-username>/four-rooms-q-learning.git
+cd four-rooms-q-learning
+pip install -r requirements.txt
+```
+
+Run any scenario (deterministic actions by default):
+
+```bash
+python Scenario1.py
+python Scenario2.py
+python Scenario3.py
+```
+
+Add `-stochastic` for noisy actions:
+
+```bash
+python Scenario1.py -stochastic
+```
+
+Figures are saved to `plots/`. Scenario 1 saves the exploration comparison curves
+(mean reward with a standard-deviation band over runs) and the final path for each
+strategy. Scenarios 2 and 3 save the final path of the last run.
+
+## Limitations
+
+- Package locations are fixed within a run, so the Q-table learns one layout rather
+  than a general policy.
+- In Scenario 2, the state records how many packages remain but not which ones,
+  so different situations can look identical to the agent.
+- Reward curves average runs that each have a different random layout.
+
+## Author
+
+Nana Kwabena Opoku-Acheampong
